@@ -1,0 +1,77 @@
+<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.0/redux.min.js"></script>
+	</head>
+	<body>
+		<div>
+			Valor: <span id="numero"></span>
+			<br/>
+			<button id="aum" onclick="aumentar()">Aumentar</button>
+			<button id="dis" onclick="disminuir()">Disminuir</button>
+		</div>
+		
+		<script type="text/javascript">
+		
+			var numero = document.getElementById('numero');
+			var self = this;
+
+			// REDUX. State es un objeto JS
+			var state = { 
+				cantidad: 0
+			}
+
+			// REDUX. Action son objetos JS con el requisito de tener un key "type"
+			// Se acciona a traves de un store.dispatch(action);
+			var actionAumentar = {
+				type: 'AUM'
+			}
+
+			var actionDisminuir = {
+				type: 'DIS'
+			}
+			
+			// REDUX. Store
+			var store = Redux.createStore(reducer, state);
+
+			// REDUX. Reducer es una función que devuelve un nuevo estado			
+			function reducer(state, action) {
+
+				// Clonar estado
+				var nuevoEstado = Object.assign({}, state);
+
+				if (action.type == 'AUM' ) {
+					nuevoEstado.cantidad = state.cantidad + 1;
+					console.log('Nuevo estado:' + nuevoEstado.cantidad); // nuevoEstado es una copia de la variable state
+					console.log('Self state:' + self.state.cantidad); // La variable state se mantiene (no se modifica)
+					return nuevoEstado;
+				}
+				
+				if (action.type == 'DIS' ) {
+					nuevoEstado.cantidad = state.cantidad - 1;
+					console.log('Nuevo estado:' + nuevoEstado.cantidad); // nuevoEstado es una copia de la variable state
+					console.log('Self state:' + self.state.cantidad); // La variable state se mantiene (no se modifica)
+					return nuevoEstado;
+				}
+
+				return state;
+			}
+
+			var aumentar = function() {
+				store.dispatch(actionAumentar); // REDUX. Dispatch				
+			}
+
+			var disminuir = function() {
+				store.dispatch(actionDisminuir); // REDUX. Dispatch
+			}
+
+			var mostrarNumero = function(){
+				// REDUX. Acceder al state a través de store 			
+				numero.innerHTML = store.getState().cantidad;
+			}
+
+			// REDUX. Suscribir el metodo que muestra el state cuando haya una modificación en el state del STORE
+			store.subscribe(mostrarNumero);
+
+		</script>
+	</body>
+</html>

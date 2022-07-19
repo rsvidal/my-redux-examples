@@ -1,0 +1,107 @@
+<html>
+	<head>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/redux/4.2.0/redux.min.js"></script>
+	</head>
+	<body>
+		<div>
+			<h2>ToDo app</h2>
+			<br/>
+			<label>Ingresar tarea:</label>
+			<input id="texto" onkeypress="agregarTarea(event)">
+			<ul id="listaDesordenada">				
+			</ul>
+		</div>
+		
+		<script type="text/javascript">
+		
+			var id = 0;
+			
+			// REDUX. State es un objeto JS
+			var state = { 
+				lista:[]
+			}
+
+			// REDUX. Action son objetos JS con el requisito de tener un key "type"
+			// Se acciona a traves de un store.dispatch(action);
+			var actionAgregar = function(tarea, id){
+				return {
+					type: 'AGR',
+					tarea, // tarea = tarea
+					id // id = id
+				}
+			}
+			
+			var actionEliminar = function(id){
+				return {
+					type: 'ELM',					
+					id // id = id
+				}
+			}
+			
+			// REDUX. Store
+			var store = Redux.createStore(reducer, state);
+
+			// REDUX. Reducer es una función que devuelve un nuevo estado			
+			function reducer(state, action) {
+
+				// Clonar estado
+				var nuevoEstado = Object.assign({}, state);
+
+				if (action.type === 'AGR' ) {
+					nuevoEstado.lista.push({
+						id: action.id,
+						li: "<li>" + action.tarea + "<button id='" + action.id + "' onclick='eliminarTarea(id)'>Eliminar</button></li>"
+					});
+					// DEBUG
+					// console.log(nuevoEstado);
+					return nuevoEstado;
+				}
+				
+				if (action.type === 'ELM' ) {
+
+					// DEBUG
+					// console.log("action.id: " + action.id);
+					nuevoEstado.lista = state.lista.filter(function(elemento){
+						// DEBUG
+						// console.log("elmento.id: " + elemento.id);
+						return parseInt(elemento.id) !== parseInt(action.id);
+					});
+					// DEBUG
+					// console.log(nuevoEstado);
+					return nuevoEstado;
+				}
+				
+				return state;
+			}
+
+			// Evento que es ejecutado cuando se escribe una tarea y se pulsa <Enter>
+			var agregarTarea = function(evento) {				
+				if (evento.keyCode === 13){				
+					// DEBUG
+					// console.log("Nueva tarea: " + evento.target.value);
+					id = id + 1;
+					store.dispatch(actionAgregar(evento.target.value, id)); // REDUX. Dispatch				
+					evento.target.value = "";
+				}
+			}
+			
+			var eliminarTarea = function(_id) {
+				// DEBUG
+				// console.log("Tarea que se eliminará: " + id);
+				store.dispatch(actionEliminar(_id)); // REDUX. Dispatch				
+			}
+			
+			var mostrarTareas = function() {
+				var elementos = store.getState().lista;					
+				elementosHtml = elementos.map(function(elemento){ return elemento.li; });
+				// DEBUG
+				console.log(elementosHtml);
+				document.getElementById("listaDesordenada").innerHTML = elementosHtml;
+			}
+			
+			// REDUX. Suscribir el metodo que muestra el state cuando haya una modificación en el state del STORE
+			store.subscribe(mostrarTareas);
+
+		</script>
+	</body>
+</html>
