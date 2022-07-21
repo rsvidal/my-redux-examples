@@ -53,8 +53,11 @@
 						li: "<li>" + action.tarea + "<button id='" + action.id + "' onclick='eliminarTarea(id)'>Eliminar</button></li>"
 					});
 					// DEBUG
-					// console.log(nuevoEstado);
-					return nuevoEstado;
+					console.log("Anterior estado:")
+					console.log(state);
+					console.log("Nuevo Estado:");
+					console.log(nuevoEstado);
+					return nuevoEstado;					
 				}
 				
 				if (action.type === 'ELM' ) {
